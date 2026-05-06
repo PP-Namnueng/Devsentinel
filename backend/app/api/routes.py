@@ -40,6 +40,7 @@ async def chat(request: ChatRequest) -> ChatResponse:
             ChatMessage(role="system", content=skill_memory),
             *request.messages,
         ],
+        model=request.model,
         temperature=request.temperature,
         max_tokens=request.max_tokens,
     )

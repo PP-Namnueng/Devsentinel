@@ -6,7 +6,7 @@ from typing import Any, Union
 
 import httpx
 
-from app.model_gateway.base import ModelGateway, ModelGatewayError, ModelOutputError
+from app.model_gateway.base import ModelConfigError, ModelGateway, ModelGatewayError, ModelOutputError
 from app.schemas.chat import ChatMessage, ChatRequest, ChatResponse, ModelInfo
 
 
@@ -15,24 +15,29 @@ class OllamaGateway(ModelGateway):
 
     provider_name = "ollama"
 
-    def __init__(self, base_url: str, model: str) -> None:
+    def __init__(self, base_url: str, model: str, timeout_seconds: float = 60.0) -> None:
         self.base_url = base_url.rstrip("/")
         self.model = model
+        self.timeout_seconds = timeout_seconds
 
     async def chat(self, request: ChatRequest) -> ChatResponse:
+        selected_model = request.model or self.model
+        if not selected_model:
+            raise ModelConfigError("No Ollama model configured. Set OLLAMA_MODEL or pass request.model.")
+
         options: dict[str, Union[float, int]] = {"temperature": request.temperature}
         if request.max_tokens is not None:
             options["num_predict"] = request.max_tokens
 
         payload = {
-            "model": self.model,
+            "model": selected_model,
             "messages": [message.model_dump() for message in request.messages],
             "stream": False,
             "options": options,
         }
 
         try:
-            async with httpx.AsyncClient(timeout=120.0) as client:
+            async with httpx.AsyncClient(timeout=self.timeout_seconds) as client:
                 response = await client.post(f"{self.base_url}/api/chat", json=payload)
                 response.raise_for_status()
         except httpx.TimeoutException as exc:
@@ -47,11 +52,11 @@ class OllamaGateway(ModelGateway):
             content = body["message"]["content"]
         except (KeyError, TypeError) as exc:
             raise ModelOutputError("Ollama response did not contain message.content") from exc
-        return ChatResponse(provider=self.provider_name, model=self.model, content=content)
+        return ChatResponse(provider=self.provider_name, model=selected_model, content=content)
 
     async def list_models(self) -> list[ModelInfo]:
         try:
-            async with httpx.AsyncClient(timeout=20.0) as client:
+            async with httpx.AsyncClient(timeout=self.timeout_seconds) as client:
                 response = await client.get(f"{self.base_url}/api/tags")
                 response.raise_for_status()
         except httpx.TimeoutException as exc:

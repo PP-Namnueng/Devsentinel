@@ -13,19 +13,23 @@ from app.schemas.chat import ChatMessage, ChatRequest, ChatResponse, ModelInfo
 class OpenAICompatibleGateway(ModelGateway):
     """OpenAI-compatible provider using /chat/completions."""
 
-    provider_name = "openai"
+    provider_name = "openai_compatible"
 
-    def __init__(self, base_url: str, model: str, api_key: Optional[str]) -> None:
+    def __init__(self, base_url: str, model: str, api_key: Optional[str], timeout_seconds: float = 60.0) -> None:
         self.base_url = base_url.rstrip("/")
         self.model = model
         self.api_key = api_key
+        self.timeout_seconds = timeout_seconds
 
     async def chat(self, request: ChatRequest) -> ChatResponse:
         if not self.api_key:
-            raise ModelConfigError("OPENAI_API_KEY is required when MODEL_PROVIDER=openai")
+            raise ModelConfigError("OPENAI_API_KEY is required when MODEL_PROVIDER=openai_compatible")
+        selected_model = request.model or self.model
+        if not selected_model:
+            raise ModelConfigError("No OpenAI-compatible model configured. Set OPENAI_MODEL or pass request.model.")
 
         payload: dict[str, Any] = {
-            "model": self.model,
+            "model": selected_model,
             "messages": [message.model_dump() for message in request.messages],
             "temperature": request.temperature,
         }
@@ -33,7 +37,7 @@ class OpenAICompatibleGateway(ModelGateway):
             payload["max_tokens"] = request.max_tokens
 
         try:
-            async with httpx.AsyncClient(timeout=60.0) as client:
+            async with httpx.AsyncClient(timeout=self.timeout_seconds) as client:
                 response = await client.post(
                     f"{self.base_url}/chat/completions",
                     headers=self._headers(),
@@ -49,13 +53,13 @@ class OpenAICompatibleGateway(ModelGateway):
 
         body = response.json()
         content = self._extract_content(body)
-        return ChatResponse(provider=self.provider_name, model=self.model, content=content)
+        return ChatResponse(provider=self.provider_name, model=selected_model, content=content)
 
     async def list_models(self) -> list[ModelInfo]:
         if not self.api_key:
-            raise ModelConfigError("OPENAI_API_KEY is required when MODEL_PROVIDER=openai")
+            raise ModelConfigError("OPENAI_API_KEY is required when MODEL_PROVIDER=openai_compatible")
         try:
-            async with httpx.AsyncClient(timeout=20.0) as client:
+            async with httpx.AsyncClient(timeout=self.timeout_seconds) as client:
                 response = await client.get(f"{self.base_url}/models", headers=self._headers())
                 response.raise_for_status()
         except httpx.TimeoutException as exc:

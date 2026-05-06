@@ -12,13 +12,14 @@ class DeterministicDemoGateway(ModelGateway):
 
     async def chat(self, request: ChatRequest) -> ChatResponse:
         last_user_message = next((message.content for message in reversed(request.messages) if message.role == "user"), "")
+        selected_model = request.model or self.model_name
         content = (
             "DevSentinel demo runtime is healthy: deterministic provider, SKILL.md governance loaded, "
             "and provider switching is controlled by MODEL_PROVIDER."
         )
         if last_user_message:
             content = f"{content} Last user request received: {last_user_message[:180]}"
-        return ChatResponse(provider=self.provider_name, model=self.model_name, content=content)
+        return ChatResponse(provider=self.provider_name, model=selected_model, content=content)
 
     async def list_models(self) -> list[ModelInfo]:
         return [ModelInfo(id=self.model_name, provider=self.provider_name)]

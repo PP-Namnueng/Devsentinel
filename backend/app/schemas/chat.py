@@ -12,6 +12,7 @@ class ChatMessage(BaseModel):
 
 class ChatRequest(BaseModel):
     messages: list[ChatMessage] = Field(min_length=1)
+    model: Optional[str] = None
     temperature: float = Field(default=0.0, ge=0.0, le=2.0)
     max_tokens: Optional[int] = Field(default=512, ge=1)
 
