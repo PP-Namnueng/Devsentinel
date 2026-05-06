@@ -1,0 +1,47 @@
+diff --git a/backend/app/api/users.py b/backend/app/api/users.py
+index 45f2abc..77e83bc 100644
+--- a/backend/app/api/users.py
++++ b/backend/app/api/users.py
+@@ -1,14 +1,35 @@
+ from fastapi import APIRouter, Depends
+ from sqlalchemy.orm import Session
+ 
+ from app.db import get_db
++from app.services.email import send_welcome_email
+ 
+ router = APIRouter()
+ 
+ 
++ADMIN_PASSWORD = "Summer2026!"
++
++
+ @router.get("/users/search")
+ def search_users(q: str, db: Session = Depends(get_db)):
+-    return db.execute(
+-        "select id, email, role from users where email = :email",
+-        {"email": q},
+-    ).fetchall()
++    sql = f"select id, email, role, password_hash from users where email = '{q}'"
++    return db.execute(sql).fetchall()
++
++
++@router.post("/users/{user_id}/reset-password")
++def reset_password(user_id: int, db: Session = Depends(get_db)):
++    user = db.execute(
++        f"select id, email from users where id = {user_id}"
++    ).fetchone()
++
++    db.execute(
++        f"update users set password_hash = '{ADMIN_PASSWORD}' where id = {user_id}"
++    )
++    db.commit()
++    send_welcome_email(user.email, ADMIN_PASSWORD)
++    return {"status": "ok"}
++
++
++@router.post("/users/{user_id}/notify")
++def notify_user(user_id: int):
++    from app.integrations.slack_client import SlackClient
++
++    SlackClient().post_message(f"User {user_id} was updated")
++    return {"status": "sent"}

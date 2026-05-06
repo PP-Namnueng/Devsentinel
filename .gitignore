@@ -1,0 +1,28 @@
+backend/.venv/
+frontend/node_modules/
+frontend/.next/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.log
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+.zed/
+
+# Build artifacts
+dist/
+build/
+
+# Coverage
+.coverage
+htmlcov/
