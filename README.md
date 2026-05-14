@@ -115,6 +115,114 @@ Invoke-RestMethod -Method Post http://localhost:8000/chat `
 
 The same runtime endpoints are also available under `/api` for compatibility, for example `http://localhost:8000/api/health`.
 
+### GitHub PR Autopilot
+
+GitHub PR review uses the existing PR Autopilot mode, but fetches the diff from GitHub and can post the generated Markdown review as a PR comment.
+
+```env
+GITHUB_TOKEN=
+GITHUB_API_BASE_URL=https://api.github.com
+```
+
+For classic personal access tokens, use a token with repo access for private repositories. The token must be able to read pull requests and create issue comments.
+
+Preview without posting:
+
+```powershell
+Invoke-RestMethod -Method Post http://localhost:8000/api/github/pr-review `
+  -ContentType "application/json" `
+  -Body '{"owner":"my-org","repo":"my-repo","pull_number":12,"model":"gpt-4.1-mini","repository_context":"FastAPI backend service","post_comment":false}'
+```
+
+### Incident Evidence Providers
+
+Incident Autopsy can still run from pasted logs or deterministic fixtures, but `/api/incidents/webhook` now resolves evidence through a provider factory. The model never calls observability tools directly. Backend adapters fetch bounded evidence, normalize it into `IncidentEvidencePacket`, redact common secrets, and then the mode analyzes that packet.
+
+Demo fixtures:
+
+```env
+INCIDENT_EVIDENCE_PROVIDER=fixture
+```
+
+Local log file testing:
+
+```env
+INCIDENT_EVIDENCE_PROVIDER=local_file
+INCIDENT_LOG_FILE_PATH=app/log_sources/dashboard-api.log
+INCIDENT_LOG_LIMIT=200
+```
+
+Datadog evidence:
+
+```env
+INCIDENT_EVIDENCE_PROVIDER=datadog
+DATADOG_API_KEY=your_api_key
+DATADOG_APP_KEY=your_app_key
+DATADOG_SITE=datadoghq.com
+INCIDENT_LOG_LIMIT=200
+```
+
+Loki and Prometheus evidence:
+
+```env
+INCIDENT_EVIDENCE_PROVIDER=loki_prometheus
+LOKI_BASE_URL=http://localhost:3100
+PROMETHEUS_BASE_URL=http://localhost:9090
+INCIDENT_LOG_LIMIT=200
+```
+
+Webhook alerts can override the configured provider with `evidence_provider` or `labels.evidence_provider`. The supported values are `fixture`, `local_file`, `datadog`, and `loki_prometheus`.
+
+Test the configured evidence datasource without running model analysis:
+
+```powershell
+Invoke-RestMethod -Method Post http://localhost:8000/api/incidents/evidence/test `
+  -ContentType "application/json" `
+  -Body '{"provider":"loki_prometheus","loki_base_url":"http://localhost:3100","prometheus_base_url":"http://localhost:9090","log_limit":200}'
+```
+
+Grafana Alerting can call the Grafana-specific webhook adapter:
+
+```text
+POST http://localhost:8000/api/incidents/grafana-webhook
+```
+
+Required Grafana alert labels:
+
+```text
+service=dashboard-api
+environment=production
+severity=sev2
+```
+
+The adapter accepts Grafana's default webhook payload, extracts the firing alert, converts it to `AlertContext`, sets `evidence_provider=loki_prometheus`, and then runs the same incident evidence and analysis pipeline.
+
+Minimal Grafana webhook test payload:
+
+```powershell
+Invoke-RestMethod -Method Post http://localhost:8000/api/incidents/grafana-webhook `
+  -ContentType "application/json" `
+  -Body '{
+    "receiver":"devsentinel",
+    "status":"firing",
+    "title":"High error rate",
+    "alerts":[{
+      "status":"firing",
+      "startsAt":"2026-05-09T10:00:00Z",
+      "fingerprint":"grafana-dashboard-api-errors",
+      "labels":{
+        "alertname":"High error rate",
+        "service":"dashboard-api",
+        "environment":"production",
+        "severity":"sev2"
+      },
+      "annotations":{
+        "summary":"dashboard-api is returning elevated 5xx responses"
+      }
+    }]
+  }'
+```
+
 ### Provider Test Commands
 
 Demo provider:

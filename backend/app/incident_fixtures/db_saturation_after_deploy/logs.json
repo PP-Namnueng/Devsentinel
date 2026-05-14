@@ -1,0 +1,49 @@
+[
+  {
+    "id": "log-db-1",
+    "timestamp": "2026-05-06T09:01:14Z",
+    "service": "dashboard-api",
+    "level": "INFO",
+    "message": "request_rate=780rps route=/dashboard p95_ms=410 status=200",
+    "source": "edge",
+    "metadata": {"route": "/dashboard", "p95_ms": 410, "status": 200}
+  },
+  {
+    "id": "log-db-2",
+    "timestamp": "2026-05-06T09:02:22Z",
+    "service": "dashboard-api",
+    "level": "WARN",
+    "message": "high query count while rendering dashboard",
+    "source": "application",
+    "trace_id": "trace-1021",
+    "metadata": {"request_id": "req-1021", "query_count": 312, "duration_ms": 2800}
+  },
+  {
+    "id": "log-db-3",
+    "timestamp": "2026-05-06T09:03:18Z",
+    "service": "postgres-primary",
+    "level": "ERROR",
+    "message": "connection checkout timeout",
+    "source": "database",
+    "metadata": {"pool_in_use": 20, "pool_size": 20, "wait_ms": 5000}
+  },
+  {
+    "id": "log-db-4",
+    "timestamp": "2026-05-06T09:03:19Z",
+    "service": "dashboard-api",
+    "level": "ERROR",
+    "message": "sqlalchemy.exc.TimeoutError: QueuePool limit of size 20 overflow 0 reached",
+    "source": "application",
+    "trace_id": "trace-1050",
+    "metadata": {"request_id": "req-1050", "status": 503}
+  },
+  {
+    "id": "log-db-5",
+    "timestamp": "2026-05-06T09:09:12Z",
+    "service": "dashboard-api",
+    "level": "INFO",
+    "message": "request_rate=310rps route=/dashboard p95_ms=340 status=200",
+    "source": "edge",
+    "metadata": {"route": "/dashboard", "p95_ms": 340, "status": 200}
+  }
+]

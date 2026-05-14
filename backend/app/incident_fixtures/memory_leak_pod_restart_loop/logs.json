@@ -1,0 +1,38 @@
+[
+  {
+    "id": "log-mem-1",
+    "timestamp": "2026-05-08T02:13:04Z",
+    "service": "invoice-worker",
+    "level": "WARN",
+    "message": "batch size increased to 5000 invoice events",
+    "source": "application",
+    "metadata": {"batch_size": 5000}
+  },
+  {
+    "id": "log-mem-2",
+    "timestamp": "2026-05-08T02:16:31Z",
+    "service": "invoice-worker",
+    "level": "ERROR",
+    "message": "container terminated: OOMKilled",
+    "source": "kubernetes",
+    "metadata": {"pod": "invoice-worker-7f8df", "reason": "OOMKilled"}
+  },
+  {
+    "id": "log-mem-3",
+    "timestamp": "2026-05-08T02:18:02Z",
+    "service": "invoice-worker",
+    "level": "ERROR",
+    "message": "container terminated: OOMKilled",
+    "source": "kubernetes",
+    "metadata": {"pod": "invoice-worker-7f8df", "reason": "OOMKilled"}
+  },
+  {
+    "id": "log-mem-4",
+    "timestamp": "2026-05-08T02:22:18Z",
+    "service": "billing-api",
+    "level": "WARN",
+    "message": "invoice generation backlog increasing",
+    "source": "application",
+    "metadata": {"backlog": 18400}
+  }
+]

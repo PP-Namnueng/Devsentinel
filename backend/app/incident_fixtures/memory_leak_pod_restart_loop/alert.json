@@ -1,0 +1,16 @@
+{
+  "alert_id": "alert-memory-loop-001",
+  "alert_name": "Worker pod restart loop",
+  "service": "invoice-worker",
+  "environment": "production",
+  "severity": "sev3",
+  "started_at": "2026-05-08T02:12:00Z",
+  "ended_at": null,
+  "window_minutes": 60,
+  "description": "Invoice worker pods are being OOMKilled after a release.",
+  "labels": {
+    "team": "billing",
+    "scenario_id": "memory_leak_pod_restart_loop"
+  },
+  "scenario_id": "memory_leak_pod_restart_loop"
+}

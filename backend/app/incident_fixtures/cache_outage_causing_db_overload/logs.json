@@ -1,0 +1,40 @@
+[
+  {
+    "id": "log-cache-1",
+    "timestamp": "2026-05-07T14:17:41Z",
+    "service": "cache-cluster",
+    "level": "WARN",
+    "message": "eviction rate increased sharply on shard checkout-3",
+    "source": "redis",
+    "metadata": {"shard": "checkout-3", "evictions_per_sec": 920}
+  },
+  {
+    "id": "log-cache-2",
+    "timestamp": "2026-05-07T14:18:10Z",
+    "service": "checkout-api",
+    "level": "WARN",
+    "message": "cache timeout fetching cart session",
+    "source": "application",
+    "trace_id": "trace-cart-441",
+    "metadata": {"operation": "load_cart", "timeout_ms": 250}
+  },
+  {
+    "id": "log-cache-3",
+    "timestamp": "2026-05-07T14:19:02Z",
+    "service": "orders-db",
+    "level": "WARN",
+    "message": "read replica CPU above threshold",
+    "source": "database",
+    "metadata": {"cpu_percent": 91, "replica": "orders-ro-2"}
+  },
+  {
+    "id": "log-cache-4",
+    "timestamp": "2026-05-07T14:20:39Z",
+    "service": "checkout-api",
+    "level": "ERROR",
+    "message": "checkout request exceeded latency budget",
+    "source": "application",
+    "trace_id": "trace-cart-459",
+    "metadata": {"duration_ms": 6200, "status": 504}
+  }
+]

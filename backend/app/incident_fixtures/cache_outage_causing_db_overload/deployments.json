@@ -1,0 +1,12 @@
+[
+  {
+    "id": "deploy-cache-1",
+    "timestamp": "2026-05-07T13:45:00Z",
+    "service": "checkout-api",
+    "version": "2026.05.07.3",
+    "commit_sha": "b772af0",
+    "author": "commerce-bot",
+    "summary": "Enabled cache fallback reads during cart session misses",
+    "metadata": {"change_type": "feature_flag"}
+  }
+]

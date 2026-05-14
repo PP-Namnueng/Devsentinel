@@ -1,0 +1,16 @@
+{
+  "alert_id": "alert-cache-outage-001",
+  "alert_name": "Checkout latency and DB read spike",
+  "service": "checkout-api",
+  "environment": "production",
+  "severity": "sev2",
+  "started_at": "2026-05-07T14:18:00Z",
+  "ended_at": null,
+  "window_minutes": 45,
+  "description": "Checkout p95 latency increased while cache hit rate dropped and database reads spiked.",
+  "labels": {
+    "team": "commerce",
+    "scenario_id": "cache_outage_causing_db_overload"
+  },
+  "scenario_id": "cache_outage_causing_db_overload"
+}

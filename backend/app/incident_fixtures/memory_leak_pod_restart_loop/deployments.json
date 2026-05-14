@@ -1,0 +1,12 @@
+[
+  {
+    "id": "deploy-mem-1",
+    "timestamp": "2026-05-08T02:09:27Z",
+    "service": "invoice-worker",
+    "version": "2026.05.08.2",
+    "commit_sha": "e91c2aa",
+    "author": "billing-bot",
+    "summary": "Released batch invoice renderer with larger in-memory aggregation buffer",
+    "metadata": {"change_type": "worker"}
+  }
+]

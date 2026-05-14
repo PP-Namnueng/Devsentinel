@@ -1,0 +1,12 @@
+[
+  {
+    "id": "trace-cache-1",
+    "timestamp": "2026-05-07T14:20:39Z",
+    "service": "checkout-api",
+    "operation": "POST /checkout",
+    "duration_ms": 6200,
+    "status": "timeout",
+    "trace_id": "trace-cart-459",
+    "metadata": {"cache_wait_ms": 250, "db_read_count": 84}
+  }
+]

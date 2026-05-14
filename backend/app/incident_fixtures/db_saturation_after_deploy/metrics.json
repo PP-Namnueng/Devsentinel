@@ -1,0 +1,29 @@
+[
+  {
+    "id": "metric-db-1",
+    "timestamp": "2026-05-06T09:02:00Z",
+    "service": "dashboard-api",
+    "metric_name": "http.server.duration.p95",
+    "value": 2800,
+    "unit": "ms",
+    "metadata": {"route": "/dashboard"}
+  },
+  {
+    "id": "metric-db-2",
+    "timestamp": "2026-05-06T09:03:00Z",
+    "service": "postgres-primary",
+    "metric_name": "db.pool.in_use",
+    "value": 20,
+    "unit": "connections",
+    "metadata": {"pool_size": 20}
+  },
+  {
+    "id": "metric-db-3",
+    "timestamp": "2026-05-06T09:05:00Z",
+    "service": "dashboard-api",
+    "metric_name": "http.server.error_rate",
+    "value": 18.4,
+    "unit": "percent",
+    "metadata": {"route": "/dashboard"}
+  }
+]

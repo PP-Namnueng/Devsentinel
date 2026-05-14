@@ -5,7 +5,7 @@ from app.model_gateway.base import ModelGateway
 from app.model_gateway.factory import build_model_gateway
 from app.modes.incident_autopsy import IncidentAutopsyMode
 from app.modes.pr_autopilot import PRAutopilotMode
-from app.schemas.incident import IncidentAutopsyRequest, IncidentAutopsyResult
+from app.schemas.incident import IncidentAutopsyReport, IncidentAutopsyRequest, IncidentAutopsyResult, IncidentEvidencePacket
 from app.schemas.pr_review import PRReviewRequest, PRReviewResult
 
 
@@ -25,3 +25,7 @@ class DevSentinelOrchestrator:
     def run_incident_autopsy(self, request: IncidentAutopsyRequest) -> IncidentAutopsyResult:
         skill = self.memory.load(request.skill_path)
         return self.incident_mode.analyze(request, skill)
+
+    def run_incident_autopsy_packet(self, packet: IncidentEvidencePacket, model: str) -> IncidentAutopsyReport:
+        skill = self.memory.load(packet.skill_path)
+        return self.incident_mode.analyze_packet(packet, model, skill)

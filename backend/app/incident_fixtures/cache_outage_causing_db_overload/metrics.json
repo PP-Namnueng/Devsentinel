@@ -1,0 +1,29 @@
+[
+  {
+    "id": "metric-cache-1",
+    "timestamp": "2026-05-07T14:18:00Z",
+    "service": "cache-cluster",
+    "metric_name": "cache.hit_rate",
+    "value": 42.5,
+    "unit": "percent",
+    "metadata": {"normal_baseline": 96}
+  },
+  {
+    "id": "metric-cache-2",
+    "timestamp": "2026-05-07T14:19:00Z",
+    "service": "orders-db",
+    "metric_name": "db.read_qps",
+    "value": 12800,
+    "unit": "qps",
+    "metadata": {"normal_baseline": 3100}
+  },
+  {
+    "id": "metric-cache-3",
+    "timestamp": "2026-05-07T14:20:00Z",
+    "service": "checkout-api",
+    "metric_name": "http.server.duration.p95",
+    "value": 6200,
+    "unit": "ms",
+    "metadata": {"route": "/checkout"}
+  }
+]

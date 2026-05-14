@@ -1,0 +1,12 @@
+[
+  {
+    "id": "trace-db-1",
+    "timestamp": "2026-05-06T09:02:22Z",
+    "service": "dashboard-api",
+    "operation": "GET /dashboard",
+    "duration_ms": 2800,
+    "status": "slow",
+    "trace_id": "trace-1021",
+    "metadata": {"db_queries": 312}
+  }
+]

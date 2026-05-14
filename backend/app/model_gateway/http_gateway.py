@@ -16,7 +16,13 @@ class HttpJsonModelGateway(ModelGateway):
         self.model = model
         self.api_key = api_key
 
-    def generate_json(self, mode: str, prompt: str, inputs: dict[str, Any]) -> dict[str, Any]:
+    def generate_json(
+        self,
+        mode: str,
+        model: Optional[str],
+        prompt: str,
+        inputs: dict[str, Any],
+    ) -> dict[str, Any]:
         headers = {"Content-Type": "application/json"}
         if self.api_key:
             headers["Authorization"] = f"Bearer {self.api_key}"
@@ -27,9 +33,11 @@ class HttpJsonModelGateway(ModelGateway):
                 {"role": "user", "content": prompt},
             ],
             "temperature": 0,
+            "max_tokens": 4000,
         }
-        if self.model:
-            payload["model"] = self.model
+        selected_model = model or self.model
+        if selected_model:
+            payload["model"] = selected_model
 
         try:
             response = httpx.post(self.endpoint, headers=headers, json=payload, timeout=60)
@@ -39,7 +47,50 @@ class HttpJsonModelGateway(ModelGateway):
 
         body = response.json()
         content = self._extract_content(body)
-        return self._parse_json(content)
+        try:
+            return self._parse_json(content)
+        except ModelOutputError as exc:
+            repaired = self._repair_json(mode, selected_model, content, headers)
+            try:
+                return self._parse_json(repaired)
+            except ModelOutputError as repair_exc:
+                raise ModelOutputError(
+                    f"Model returned malformed JSON and repair failed: {repair_exc}"
+                ) from exc
+
+    def _repair_json(self, mode: str, model: Optional[str], malformed_content: str, headers: dict[str, str]) -> str:
+        payload: dict[str, Any] = {
+            "messages": [
+                {
+                    "role": "system",
+                    "content": (
+                        "You repair malformed JSON. Return exactly one valid JSON object only. "
+                        "Do not add markdown, comments, or explanations."
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        f"Repair this {mode} JSON so it parses and preserves the same data. "
+                        "Use double quotes for all keys and strings, add any missing commas, "
+                        "remove trailing commas, and escape code evidence inside strings.\n\n"
+                        f"{malformed_content}"
+                    ),
+                },
+            ],
+            "temperature": 0,
+            "max_tokens": 4000,
+        }
+        if model:
+            payload["model"] = model
+
+        try:
+            response = httpx.post(self.endpoint, headers=headers, json=payload, timeout=60)
+            response.raise_for_status()
+        except httpx.HTTPError as exc:
+            raise ModelGatewayError(f"Model gateway JSON repair request failed: {exc}") from exc
+
+        return self._extract_content(response.json())
 
     def _extract_content(self, body: dict[str, Any]) -> str:
         if "choices" in body:

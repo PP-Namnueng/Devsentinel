@@ -1,0 +1,16 @@
+{
+  "alert_id": "alert-db-saturation-001",
+  "alert_name": "Database connection pool saturation",
+  "service": "dashboard-api",
+  "environment": "production",
+  "severity": "sev2",
+  "started_at": "2026-05-06T09:02:00Z",
+  "ended_at": "2026-05-06T09:10:00Z",
+  "window_minutes": 30,
+  "description": "Dashboard requests are timing out while postgres connection pool usage is pinned.",
+  "labels": {
+    "team": "platform",
+    "scenario_id": "db_saturation_after_deploy"
+  },
+  "scenario_id": "db_saturation_after_deploy"
+}

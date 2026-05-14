@@ -1,0 +1,29 @@
+[
+  {
+    "id": "metric-mem-1",
+    "timestamp": "2026-05-08T02:15:00Z",
+    "service": "invoice-worker",
+    "metric_name": "container.memory.usage",
+    "value": 1024,
+    "unit": "MiB",
+    "metadata": {"limit_mib": 1024}
+  },
+  {
+    "id": "metric-mem-2",
+    "timestamp": "2026-05-08T02:18:00Z",
+    "service": "invoice-worker",
+    "metric_name": "kubernetes.pod.restart_count",
+    "value": 4,
+    "unit": "count",
+    "metadata": {"pod": "invoice-worker-7f8df"}
+  },
+  {
+    "id": "metric-mem-3",
+    "timestamp": "2026-05-08T02:22:00Z",
+    "service": "billing-api",
+    "metric_name": "invoice.backlog",
+    "value": 18400,
+    "unit": "events",
+    "metadata": {}
+  }
+]

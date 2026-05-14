@@ -7,8 +7,10 @@ from app.api.routes import chat as chat_endpoint
 from app.api.routes import health as health_endpoint
 from app.api.routes import list_models as list_models_endpoint
 from app.api.routes import router
-from app.schemas.chat import ChatRequest, ChatResponse, ModelInfo
+from app.observability.logging_config import configure_logging
+from app.schemas.chat import ChatRequest, ChatResponse
 
+configure_logging()
 
 app = FastAPI(
     title="DevSentinel API",
@@ -18,7 +20,12 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3001",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -32,8 +39,8 @@ def health() -> dict[str, str]:
     return health_endpoint()
 
 
-@app.get("/models", response_model=list[ModelInfo])
-async def list_models() -> list[ModelInfo]:
+@app.get("/models")
+async def list_models() -> dict[str, object]:
     return await list_models_endpoint()
 
 

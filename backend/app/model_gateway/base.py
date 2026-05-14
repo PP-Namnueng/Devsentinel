@@ -28,5 +28,11 @@ class ModelGateway(ABC):
         """Return demo-friendly model metadata for the active provider."""
 
     @abstractmethod
-    def generate_json(self, mode: str, prompt: str, inputs: dict[str, Any]) -> dict[str, Any]:
+    def generate_json(
+        self,
+        mode: str,
+        model: str,
+        prompt: str,
+        inputs: dict[str, Any],
+    ) -> dict[str, Any]:
         """Return parsed JSON for a DevSentinel mode."""
